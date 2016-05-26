@@ -7,11 +7,6 @@ class RegexValueCreator < ValueCreator
     @skipregex = skipregex
   end
 
-  def setSequenceSource(sequenceSource)
-    @sequenceSource = sequenceSource
-    self
-  end
-
   def nextValue
     offset = @sequenceSource.pos
     s = @sequenceSource.read_til_charset(@regex)

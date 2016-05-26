@@ -10,5 +10,5 @@ Gem::Specification.new do |gem|
   gem.homepage    =
       'http://rubygems.org/gems/value_sequence'
   gem.license       = 'MIT'
-  gem.add_runtime_dependency(%q<sequence>, [">= 0.2.3"])
+  gem.add_runtime_dependency 'sequence', '~> 0.2', '>= 0.2.3'
 end

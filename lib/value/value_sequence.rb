@@ -3,10 +3,11 @@ require 'sequence/file'
 class ValueSequence
   attr_reader :lastValuePosition, :done
 
-  def initialize
+  def initialize(valueCreator)
     @lastValuePosition = -1
     @filters = []
     @done = false
+    @valueCreator = valueCreator
   end
 
   def addFilter(filter)
