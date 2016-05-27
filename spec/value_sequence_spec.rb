@@ -1,5 +1,6 @@
 require 'rspec'
 require_relative '../lib/creator/regex_value_creator'
+require_relative '../lib/creator/sequence_value_creator'
 require_relative '../lib/value/value_sequence'
 require_relative '../lib/filter/regex_filter'
 
@@ -109,32 +110,69 @@ describe 'Value sequence' do
 
   it 'should support word sequences' do
     valueSequence = ValueSequence.new(wordValueCreator)
-    valueSequence.addStringDataSource("blah blah \n\rtest one               two")
+    valueSequence.addStringDataSource("  blah blah \n\rtest one               two")
     seqVal = valueSequence.nextValue
     expect(seqVal.value).to eq("blah")
-    expect(seqVal.location).to eq(0)
+    expect(seqVal.location).to eq(2)
     expect(seqVal.dataId).to eq(0)
     seqVal = valueSequence.nextValue
     expect(seqVal.value).to eq("blah")
-    expect(seqVal.location).to eq(5)
+    expect(seqVal.location).to eq(7)
     expect(seqVal.dataId).to eq(0)
     seqVal = valueSequence.nextValue
     expect(seqVal.value).to eq("test")
-    expect(seqVal.location).to eq(12)
+    expect(seqVal.location).to eq(14)
     expect(seqVal.dataId).to eq(0)
     seqVal = valueSequence.nextValue
     expect(seqVal.value).to eq("one")
-    expect(seqVal.location).to eq(17)
+    expect(seqVal.location).to eq(19)
     expect(seqVal.dataId).to eq(0)
     seqVal = valueSequence.nextValue
     expect(seqVal.value).to eq("two")
-    expect(seqVal.location).to eq(35)
+    expect(seqVal.location).to eq(37)
     expect(seqVal.dataId).to eq(0)
   end
 
   it 'should allow one ValueSequence to be data source for another' do
-    valueSequence = ValueSequence.new(lineValueCreator)
-    valueSequence.addFileDataSource("spec/fixtures/wordlines.txt")
+    lineValueSequence = ValueSequence.new(lineValueCreator)
+    lineValueSequence.addFileDataSource("spec/fixtures/wordlines.txt")
     wordValueSequence = ValueSequence.new(wordValueCreator)
+    sequenceValueCreator = SequenceValueCreator.new(lineValueSequence, wordValueSequence)
+    sequence = ValueSequence.new(sequenceValueCreator)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("one")
+    expect(seqVal.location).to eq(0)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("two")
+    expect(seqVal.location).to eq(4)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("three")
+    expect(seqVal.location).to eq(8)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("four")
+    expect(seqVal.location).to eq(14)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("five")
+    expect(seqVal.location).to eq(19)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("six")
+    expect(seqVal.location).to eq(24)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("seven")
+    expect(seqVal.location).to eq(28)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("eight")
+    expect(seqVal.location).to eq(34)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("nine")
+    expect(seqVal.location).to eq(40)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("ten")
+    expect(seqVal.location).to eq(45)
+    seqVal = sequence.nextValue
+    expect(seqVal.value).to eq("eleven")
+    expect(seqVal.location).to eq(50)
+    seqVal = sequence.nextValue
+    expect(seqVal).to eq(nil)
   end
 end

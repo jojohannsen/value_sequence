@@ -11,10 +11,12 @@ class RegexValueCreator < ValueCreator
   end
 
   def nextValue
+    return nil if (@sequenceSource == nil)
+    @sequenceSource.read_til_charset(@skipregex)
     @offset = @sequenceSource.pos
     s = @sequenceSource.read_til_charset(@regex)
-    @sequenceSource.read_til_charset(@skipregex)
     @nextOffset = @sequenceSource.pos
+    return nil if (@offset == @nextOffset)
     ValueLocation.new(s, @offset, dataId)
   end
 

@@ -6,4 +6,8 @@ class ValueLocation
     @location = location
     @dataId = dataId
   end
+
+  def addLocationOffset(offset)
+    @location += offset
+  end
 end

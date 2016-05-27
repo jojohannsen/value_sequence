@@ -6,6 +6,7 @@ class ValueCreator
 
   def initialize()
     @dataId = -1
+    @sequenceSource = nil
   end
 
   def setSequenceSource(sequenceSource)
@@ -23,4 +24,7 @@ class ValueCreator
     raise "Abstract method called"
   end
 
+  def initialDataSources
+    []
+  end
 end
