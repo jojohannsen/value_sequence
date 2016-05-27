@@ -4,8 +4,12 @@ require_relative 'value_sequence'
 
 class FileValueSequence < ValueSequence
 
-  def initialize(filePath, valueCreator)
-    super(valueCreator.setSequenceSource(Sequence::File.new(File.new(filePath))))
+  def initialize(valueCreator)
+    super(valueCreator)
+  end
+
+  def addDataSource(filePath)
+    setSequenceSource(Sequence::File.new(File.new(filePath)))
   end
 
 end

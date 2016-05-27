@@ -2,10 +2,17 @@
 #  subclasses implement nextValue
 #
 class ValueCreator
+  attr_reader :sequenceSource, :dataId
+
+  def initialize()
+    @dataId = -1
+  end
 
   def setSequenceSource(sequenceSource)
-    @sequenceSource = sequenceSource
-    self
+    if (sequenceSource != @sequenceSource) then
+      @sequenceSource = sequenceSource
+      @dataId += 1 if sequenceSource != nil
+    end
   end
 
   def nextValue

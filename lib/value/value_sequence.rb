@@ -4,8 +4,8 @@ class ValueSequence
   attr_reader :lastValuePosition, :done
 
   def initialize(valueCreator)
-    @lastValuePosition = -1
     @filters = []
+    @dataSources = []
     @done = false
     @valueCreator = valueCreator
   end
@@ -14,19 +14,32 @@ class ValueSequence
     @filters << filter
   end
 
+  def setSequenceSource(sequence)
+    @dataSources << sequence
+  end
+
   def nextValue
-    while !@done do
+    while true do
+      setDataSource
       result = @valueCreator.nextValue()
-      if (result.location != @lastValuePosition) then
+      if (@valueCreator.hasValue) then
         if (!@filters.any? { |filter| filter.matches result.value }) then
-          @lastValuePosition = result.location
           return result
         end
       else
-        @done = true
+        @valueCreator.setSequenceSource(nil)
       end
     end
     return nil
   end
+
+  private
+
+    def setDataSource
+      if ((@valueCreator.sequenceSource == nil) && (@dataSources.length > 0)) then
+        @valueCreator.setSequenceSource(@dataSources.shift)
+      end
+    end
+
 end
 
