@@ -3,6 +3,7 @@ require_relative '../lib/creator/regex_value_creator'
 require_relative '../lib/creator/sequence_value_creator'
 require_relative '../lib/value/value_sequence'
 require_relative '../lib/filter/regex_filter'
+require_relative '../lib/transformer/string_to_number'
 
 describe 'Value sequence' do
 
@@ -192,4 +193,27 @@ describe 'Value sequence' do
     seqVal = sequence.nextValue
     expect(seqVal).to eq(nil)
   end
+
+  it 'should transform strings into numbers' do
+    lineValueSequence = ValueSequence.new(lineValueCreator)
+    lineValueSequence.addFileDataSource("spec/fixtures/wordlines.txt")
+    lineValueSequence.addFileDataSource("spec/fixtures/wordlines2.txt")
+    wordValueSequence = ValueSequence.new(wordValueCreator)
+    sequenceValueCreator = SequenceValueCreator.new(lineValueSequence, wordValueSequence)
+    sequence = ValueSequence.new(sequenceValueCreator)
+    sequence.setTransformer(StringToNumber.new)
+    (1..11).each do |val|
+      seqVal = sequence.nextValue
+      expect(seqVal.value).to eq(val)
+      expect(seqVal.dataId).to eq(0)
+    end
+    11.downto(1).each do |val|
+      seqVal = sequence.nextValue
+      expect(seqVal.value).to eq(val)
+      expect(seqVal.dataId).to eq(1)
+    end
+    seqVal = sequence.nextValue
+    expect(seqVal).to eq(nil)
+  end
 end
+

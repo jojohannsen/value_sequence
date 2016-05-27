@@ -5,8 +5,14 @@ class ValueSequence
 
   def initialize(valueCreator)
     @filters = []
+    @transformer = nil
     @dataSources = valueCreator.initialDataSources
     @valueCreator = valueCreator
+  end
+
+  # allow values to be transformed before returning
+  def setTransformer(transformer)
+    @transformer = transformer
   end
 
   # filter out values
@@ -35,6 +41,9 @@ class ValueSequence
       result = @valueCreator.nextValue
       if (@valueCreator.hasValue) then
         if (!@filters.any? { |filter| filter.matches result.value }) then
+          if (@transformer != nil) then
+            result.setValue(@transformer.transform(result.value))
+          end
           return result
         end
       else

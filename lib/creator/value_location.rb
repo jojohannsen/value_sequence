@@ -11,4 +11,8 @@ class ValueLocation
     @location += offset
     @dataId = dataId
   end
+
+  def setValue(value)
+    @value = value
+  end
 end
