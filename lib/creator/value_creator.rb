@@ -15,6 +15,10 @@ class ValueCreator
     end
   end
 
+  def resetSequenceSource()
+    @sequenceSource = nil
+  end
+
   def nextValue
     raise "Abstract method called"
   end

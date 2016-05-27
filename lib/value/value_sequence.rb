@@ -1,4 +1,5 @@
 require 'sequence/file'
+require 'sequence/indexed'
 
 class ValueSequence
   attr_reader :lastValuePosition, :done
@@ -14,7 +15,15 @@ class ValueSequence
     @filters << filter
   end
 
-  def setSequenceSource(sequence)
+  def addStringDataSource(s)
+    addSequenceSource(Sequence::Indexed.new(s))
+  end
+
+  def addFileDataSource(filePath)
+    addSequenceSource(Sequence::File.new(File.new(filePath)))
+  end
+
+  def addSequenceSource(sequence)
     @dataSources << sequence
   end
 
@@ -27,7 +36,7 @@ class ValueSequence
           return result
         end
       else
-        @valueCreator.setSequenceSource(nil)
+        @valueCreator.resetSequenceSource()
       end
     end
     return nil
