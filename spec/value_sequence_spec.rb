@@ -174,5 +174,22 @@ describe 'Value sequence' do
     expect(seqVal.location).to eq(50)
     seqVal = sequence.nextValue
     expect(seqVal).to eq(nil)
+    seqVal = sequence.nextValue
+    expect(seqVal).to eq(nil)
+    seqVal = sequence.nextValue
+    expect(seqVal).to eq(nil)
+  end
+
+  it 'should allow multiple files as source for another' do
+    lineValueSequence = ValueSequence.new(lineValueCreator)
+    lineValueSequence.addFileDataSource("spec/fixtures/line123.txt")
+    lineValueSequence.addFileDataSource("spec/fixtures/line123.txt")
+    wordValueSequence = ValueSequence.new(wordValueCreator)
+    sequenceValueCreator = SequenceValueCreator.new(lineValueSequence, wordValueSequence)
+    sequence = ValueSequence.new(sequenceValueCreator)
+    check123(sequence, 0)
+    check123(sequence, 1)
+    seqVal = sequence.nextValue
+    expect(seqVal).to eq(nil)
   end
 end

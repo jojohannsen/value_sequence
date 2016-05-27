@@ -7,7 +7,8 @@ class ValueLocation
     @dataId = dataId
   end
 
-  def addLocationOffset(offset)
+  def updateLocation(offset, dataId)
     @location += offset
+    @dataId = dataId
   end
 end

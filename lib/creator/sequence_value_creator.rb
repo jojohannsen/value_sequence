@@ -20,12 +20,13 @@ class SequenceValueCreator < ValueCreator
         return nil
       else
         @locationOffset = inResult.location
+        @dataId = inResult.dataId
         @outgoingValueSequence.addStringDataSource(inResult.value)
         result = @outgoingValueSequence.nextValue
       end
     end
     if (result != nil) then
-      result.addLocationOffset(@locationOffset)
+      result.updateLocation(@locationOffset, @dataId)
     end
     result
   end
