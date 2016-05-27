@@ -10,14 +10,14 @@ describe 'value creation' do
   let (:line2) { "line2" }
   let (:line3) { "line3" }
   let (:line4) { "no newline at end" }
-  let (:regexValueCreator) {     RegexValueCreator.new(/[\n\r]/, /[^[\n\r]]/)}
+  let (:lineValueCreator) {     RegexValueCreator.new(/[\n\r]/, /[^[\n\r]]/)}
 
   it 'should create sequence of values' do
-    regexValueCreator.setSequenceSource(Sequence::Indexed.new("#{line1}\n#{line2}\n#{line3}\n#{line4}"))
-    expect(regexValueCreator.nextValue.value).to eq(line1)
-    expect(regexValueCreator.nextValue.value).to eq(line2)
-    expect(regexValueCreator.nextValue.value).to eq(line3)
-    expect(regexValueCreator.nextValue.value).to eq(line4)
+    lineValueCreator.setSequenceSource(Sequence::Indexed.new("#{line1}\n#{line2}\n#{line3}\n#{line4}"))
+    expect(lineValueCreator.nextValue.value).to eq(line1)
+    expect(lineValueCreator.nextValue.value).to eq(line2)
+    expect(lineValueCreator.nextValue.value).to eq(line3)
+    expect(lineValueCreator.nextValue.value).to eq(line4)
   end
 
 end

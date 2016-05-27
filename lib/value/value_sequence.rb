@@ -2,12 +2,10 @@ require 'sequence/file'
 require 'sequence/indexed'
 
 class ValueSequence
-  attr_reader :lastValuePosition, :done
 
   def initialize(valueCreator)
     @filters = []
     @dataSources = []
-    @done = false
     @valueCreator = valueCreator
   end
 
@@ -30,13 +28,13 @@ class ValueSequence
   def nextValue
     while true do
       setDataSource
-      result = @valueCreator.nextValue()
+      result = @valueCreator.nextValue
       if (@valueCreator.hasValue) then
         if (!@filters.any? { |filter| filter.matches result.value }) then
           return result
         end
       else
-        @valueCreator.resetSequenceSource()
+        @valueCreator.resetSequenceSource
       end
     end
     return nil
