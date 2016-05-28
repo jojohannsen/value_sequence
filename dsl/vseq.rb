@@ -1,4 +1,4 @@
-require_relative 'value_sequence'
+require_relative '../lib/value_sequence'
 
 Gem.find_files("./dsl/*.rb").each { |path| require path }
 
@@ -13,6 +13,8 @@ class Dsl
     @transformers = []
     @creators["line"] = RegexValueCreator.new(/[\n\r]/, /[^[\n\r]]/)
     @creators["word"] = RegexValueCreator.new(/[^[\w]]/, /[\w]/)
+    @failures = []
+    @numberExpectations = 0
   end
 
   def xline(data)
@@ -27,9 +29,11 @@ class Dsl
 
 
   def run(file, showline)
+    @lineNumber = 0
     begin
       print "#{@prompt}"
       while (line = file.readline) do
+        @lineNumber += 1
         line.chomp!
         puts line if (showline)
         data = line.split
@@ -40,6 +44,22 @@ class Dsl
         print "#{@prompt}"
       end
     rescue EOFError
+    end
+    results
+  end
+
+  def expect(value)
+    @numberExpectations += 1
+    comparison_value = value
+    if (@lastVal.is_a? Numeric) then
+      comparison_value = value.to_i
+    end
+    if (comparison_value != @lastVal) then
+      failure = "#{@lineNumber}: expected #{value}, got #{@lastVal}"
+      @failures << failure
+      "FAILURE: #{failure}"
+    else
+      "Passed"
     end
   end
 
@@ -68,11 +88,18 @@ class Dsl
           else
             @current_sequence.setCreator(@creators[data[1]])
           end
+        when "to"
+          if (data[1] == "number") then
+            @current_sequence.setTransformer(StringToNumber.new)
+          end
+        when "expect"
+          expect(data[1])
         when "next"
           val = @current_sequence.nextValue
           if (val == nil) then
-            "nil"
+            @lastVal = val = "nil"
           else
+            @lastVal = val.value
             val
           end
       end
@@ -91,6 +118,17 @@ class Dsl
   def setPrompt(prompt)
     @prompt = prompt
   end
+
+  def results
+    if (@failures.length > 0) then
+      puts "TESTS FAILED!  Failure count: #{@failures.length} "
+      @failures.each do |failure|
+        puts "  #{failure}"
+      end
+    else
+      puts "#{@numberExpectations} tests, All tests passed"
+    end
+  end
 end
 
 dsl = Dsl.new
@@ -105,3 +143,4 @@ else
 end
 
 dsl.run(file, showCommand)
+dsl.results

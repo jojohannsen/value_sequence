@@ -1,0 +1,17 @@
+sequence fseq
+file "../spec/fixtures/wordlines.txt"
+file "../spec/fixtures/wordlines2.txt"
+by line
+sequence wseq
+by word
+sequence chained
+by sequence fseq wseq
+to number
+7 next
+expect 7
+next
+expect 8
+next
+expect 9
+20 next
+expect nil
