@@ -21,7 +21,11 @@ class ValueCreator
   end
 
   def nextValue
-    raise "Abstract method called"
+    null
+  end
+
+  def hasValue
+    false
   end
 
   def initialDataSources

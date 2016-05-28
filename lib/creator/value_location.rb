@@ -15,4 +15,8 @@ class ValueLocation
   def setValue(value)
     @value = value
   end
+
+  def to_s
+    "#{@dataId}:#{@location}=#{@value}"
+  end
 end

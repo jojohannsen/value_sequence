@@ -1,9 +1,5 @@
 require 'rspec'
-require_relative '../lib/creator/regex_value_creator'
-require_relative '../lib/creator/sequence_value_creator'
-require_relative '../lib/value/value_sequence'
-require_relative '../lib/filter/regex_filter'
-require_relative '../lib/transformer/string_to_number'
+require_relative '../lib/value_sequence'
 
 describe 'Value sequence' do
 
@@ -39,33 +35,33 @@ describe 'Value sequence' do
   let (:lastfilterline) { "end line" }
 
   it 'should create sequence of values from a file' do
-    fileValue = ValueSequence.new(lineValueCreator)
+    fileValue = ValueSequence.new().setCreator(lineValueCreator)
     fileValue.addFileDataSource("spec/fixtures/testdata.txt")
     check(fileValue)
-    fileValue = ValueSequence.new(lineValueCreator)
+    fileValue = ValueSequence.new().setCreator(lineValueCreator)
     fileValue.addFileDataSource("spec/fixtures/testdata1.txt")
     check(fileValue)
-    fileValue = ValueSequence.new(lineValueCreator)
+    fileValue = ValueSequence.new().setCreator(lineValueCreator)
     fileValue.addFileDataSource("spec/fixtures/testdata2.txt")
     check(fileValue)
   end
 
   it 'should filter out values' do
-    fileValue = ValueSequence.new(lineValueCreator)
+    fileValue = ValueSequence.new().setCreator(lineValueCreator)
     fileValue.addFileDataSource("spec/fixtures/filterdata.txt")
-    fileValue.addFilter(regexFilter)
+    fileValue.setFilter(regexFilter)
     expect(fileValue.nextValue.value).to eq(line1)
     expect(fileValue.nextValue.value).to eq(lastfilterline)
   end
 
   it 'should handle strings same as file' do
-    stringValue = ValueSequence.new(lineValueCreator)
+    stringValue = ValueSequence.new().setCreator(lineValueCreator)
     stringValue.addStringDataSource("#{line1}\n#{line2}\r\n#{line3}\r\r\n\n#{line4}\r#{line5}")
     check(stringValue)
   end
 
   it 'should handle multiple string data sources' do
-    mValue = ValueSequence.new(lineValueCreator)
+    mValue = ValueSequence.new().setCreator(lineValueCreator)
     mValue.addStringDataSource("#{line1}")
     mValue.addStringDataSource("#{line2}\n\r#{line3}")
     mValue.addStringDataSource("#{line4}")
@@ -88,7 +84,7 @@ describe 'Value sequence' do
   end
 
   it 'should handle multiple file data sources' do
-    fileValue = ValueSequence.new(lineValueCreator)
+    fileValue = ValueSequence.new().setCreator(lineValueCreator)
     fileValue.addFileDataSource("spec/fixtures/line123.txt")
     fileValue.addFileDataSource("spec/fixtures/line123.txt")
     fileValue.addFileDataSource("spec/fixtures/line123.txt")
@@ -98,7 +94,7 @@ describe 'Value sequence' do
   end
 
   it 'should be able to mix file and string data sources' do
-    valueSequence = ValueSequence.new(lineValueCreator)
+    valueSequence = ValueSequence.new().setCreator(lineValueCreator)
     valueSequence.addFileDataSource("spec/fixtures/line123.txt")
     valueSequence.addStringDataSource("line1\r\nline2\n\rline3")
     valueSequence.addStringDataSource("blahblah")
@@ -110,7 +106,7 @@ describe 'Value sequence' do
   end
 
   it 'should support word sequences' do
-    valueSequence = ValueSequence.new(wordValueCreator)
+    valueSequence = ValueSequence.new().setCreator(wordValueCreator)
     valueSequence.addStringDataSource("  blah blah \n\rtest one               two")
     seqVal = valueSequence.nextValue
     expect(seqVal.value).to eq("blah")
@@ -135,11 +131,11 @@ describe 'Value sequence' do
   end
 
   it 'should allow one ValueSequence to be data source for another' do
-    lineValueSequence = ValueSequence.new(lineValueCreator)
+    lineValueSequence = ValueSequence.new().setCreator(lineValueCreator)
     lineValueSequence.addFileDataSource("spec/fixtures/wordlines.txt")
-    wordValueSequence = ValueSequence.new(wordValueCreator)
+    wordValueSequence = ValueSequence.new().setCreator(wordValueCreator)
     sequenceValueCreator = SequenceValueCreator.new(lineValueSequence, wordValueSequence)
-    sequence = ValueSequence.new(sequenceValueCreator)
+    sequence = ValueSequence.new().setCreator(sequenceValueCreator)
     seqVal = sequence.nextValue
     expect(seqVal.value).to eq("one")
     expect(seqVal.location).to eq(0)
@@ -182,12 +178,12 @@ describe 'Value sequence' do
   end
 
   it 'should allow multiple files as source for another' do
-    lineValueSequence = ValueSequence.new(lineValueCreator)
+    lineValueSequence = ValueSequence.new().setCreator(lineValueCreator)
     lineValueSequence.addFileDataSource("spec/fixtures/line123.txt")
     lineValueSequence.addFileDataSource("spec/fixtures/line123.txt")
-    wordValueSequence = ValueSequence.new(wordValueCreator)
+    wordValueSequence = ValueSequence.new().setCreator(wordValueCreator)
     sequenceValueCreator = SequenceValueCreator.new(lineValueSequence, wordValueSequence)
-    sequence = ValueSequence.new(sequenceValueCreator)
+    sequence = ValueSequence.new().setCreator(sequenceValueCreator)
     check123(sequence, 0)
     check123(sequence, 1)
     seqVal = sequence.nextValue
@@ -195,12 +191,12 @@ describe 'Value sequence' do
   end
 
   it 'should transform strings into numbers' do
-    lineValueSequence = ValueSequence.new(lineValueCreator)
+    lineValueSequence = ValueSequence.new().setCreator(lineValueCreator)
     lineValueSequence.addFileDataSource("spec/fixtures/wordlines.txt")
     lineValueSequence.addFileDataSource("spec/fixtures/wordlines2.txt")
-    wordValueSequence = ValueSequence.new(wordValueCreator)
+    wordValueSequence = ValueSequence.new().setCreator(wordValueCreator)
     sequenceValueCreator = SequenceValueCreator.new(lineValueSequence, wordValueSequence)
-    sequence = ValueSequence.new(sequenceValueCreator)
+    sequence = ValueSequence.new().setCreator(sequenceValueCreator)
     sequence.setTransformer(StringToNumber.new)
     (1..11).each do |val|
       seqVal = sequence.nextValue

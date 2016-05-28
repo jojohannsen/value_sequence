@@ -1,23 +1,47 @@
 require 'sequence/file'
 require 'sequence/indexed'
 
+class NullFilter
+  def filter(value)
+    return false
+  end
+end
+
+class NullTransformer
+  def transform(value)
+    value
+  end
+end
+
+class NullValueCreator
+
+end
+
 class ValueSequence
 
-  def initialize(valueCreator)
-    @filters = []
-    @transformer = nil
-    @dataSources = valueCreator.initialDataSources
+  def initialize
+    @filter = NullFilter.new
+    @transformer = NullTransformer.new
+    @dataSources = []
+    @valueCreator = NullValueCreator.new
+  end
+
+  def setCreator(valueCreator)
     @valueCreator = valueCreator
+    @dataSources = valueCreator.initialDataSources if (@dataSources.length == 0)
+    self
   end
 
   # allow values to be transformed before returning
   def setTransformer(transformer)
     @transformer = transformer
+    self
   end
 
   # filter out values
-  def addFilter(filter)
-    @filters << filter
+  def setFilter(filter)
+    @filter = filter
+    self
   end
 
   # string specific data source
@@ -33,6 +57,7 @@ class ValueSequence
   # generic sequence data source
   def addSequenceSource(sequence)
     @dataSources << sequence
+    self
   end
 
   # returns the next value, or nil if no more
@@ -40,10 +65,8 @@ class ValueSequence
     while setDataSource do
       result = @valueCreator.nextValue
       if (@valueCreator.hasValue) then
-        if (!@filters.any? { |filter| filter.matches result.value }) then
-          if (@transformer != nil) then
-            result.setValue(@transformer.transform(result.value))
-          end
+        if (!@filter.filter(result.value)) then
+          result.setValue(@transformer.transform(result.value))
           return result
         end
       else
@@ -70,3 +93,6 @@ class ValueSequence
 
 end
 
+Gem.find_files("./creator/*.rb").each { |path| require path }
+Gem.find_files("./filter/*.rb").each { |path| require path }
+Gem.find_files("./transformer/*.rb").each { |path| require path }

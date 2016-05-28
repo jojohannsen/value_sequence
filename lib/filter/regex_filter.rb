@@ -3,7 +3,7 @@ class RegexFilter
     @filter = filter
   end
 
-  def matches(s)
+  def filter(s)
     s =~ @filter
   end
 end
