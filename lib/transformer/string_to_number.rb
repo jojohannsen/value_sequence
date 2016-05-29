@@ -5,7 +5,6 @@ class StringToNumber
   end
 
   def transform(value)
-    value = value.downcase
     if (@valueToNumber.has_key?(value)) then
       return @valueToNumber[value]
     else

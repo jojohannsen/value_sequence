@@ -7,11 +7,6 @@ class NullFilter
   end
 end
 
-class NullTransformer
-  def transform(value)
-    value
-  end
-end
 
 class NullValueCreator
 
@@ -21,7 +16,7 @@ class ValueSequence
 
   def initialize
     @filter = NullFilter.new
-    @transformer = NullTransformer.new
+    @transformer = Transformer.new
     @dataSources = []
     @valueCreator = NullValueCreator.new
   end
@@ -33,8 +28,8 @@ class ValueSequence
   end
 
   # allow values to be transformed before returning
-  def setTransformer(transformer)
-    @transformer = transformer
+  def addTransformer(transformer)
+    @transformer.add(transformer)
     self
   end
 

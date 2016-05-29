@@ -90,7 +90,7 @@ class Dsl
           end
         when "to"
           if (data[1] == "number") then
-            @current_sequence.setTransformer(StringToNumber.new)
+            @current_sequence.addTransformer(StringToNumber.new)
           end
         when "expect"
           expect(data[1])

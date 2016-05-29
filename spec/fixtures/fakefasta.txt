@@ -1,0 +1,8 @@
+>this sort of line should be filtered
+>just based
+AsdfAsdf
+>comment line
+Csdfcsdf
+Gsdfgsdf
+TsdfTsdf
+>on that first character

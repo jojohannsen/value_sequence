@@ -191,13 +191,13 @@ describe 'Value sequence' do
   end
 
   it 'should transform strings into numbers' do
-    lineValueSequence = ValueSequence.new().setCreator(lineValueCreator)
+    lineValueSequence = ValueSequence.new().setCreator(lineValueCreator).addTransformer(CaseTransformer.new(:down))
     lineValueSequence.addFileDataSource("spec/fixtures/wordlines.txt")
     lineValueSequence.addFileDataSource("spec/fixtures/wordlines2.txt")
     wordValueSequence = ValueSequence.new().setCreator(wordValueCreator)
     sequenceValueCreator = SequenceValueCreator.new(lineValueSequence, wordValueSequence)
     sequence = ValueSequence.new().setCreator(sequenceValueCreator)
-    sequence.setTransformer(StringToNumber.new)
+    sequence.addTransformer(StringToNumber.new)
     (1..11).each do |val|
       seqVal = sequence.nextValue
       expect(seqVal.value).to eq(val)
